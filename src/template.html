@@ -9,17 +9,34 @@
 
 <body>
   <div class="container">
-    <div class="todo-app">
-      <h2>TO-DO LIST <img src="img/icon.png"></h2>
-      <div class="row">
-        <input type="text" id="input-box" placeholder="Add your text">
-        <button id="add-btn">Add</button>
+    <div class="heading">
+      <h2>MY TO-DO <img src="img/icon.png"></h2>
+    </div>
+    <div class="side-bar " id="sideBar">
+      <div class="user-details">
+        <div class="login-details">
+          <div class="profile-photo"><img src="./img/IMG_3779.PNG" alt="p.photo"></div>
+          <div class="user-name">Greg <span>Free Plan</span></div>
+        </div>
+        <div class="go-premium">Go Premium</div>
       </div>
-      <ul id="list-container">
-        <!-- <li class="list-item checked" >Task 1</li>
-        <li class="list-item">Task 2</li>
-        <li class="list-item">Task 3</li> -->
-      </ul>
+      <div class="calendar"></div>
+      <div class="task-type">
+        <h3>My Projects</h3>
+        <ul>
+          <li>Personal</li>
+          <li>Work</li>
+        </ul>
+      </div>
+    </div>
+    <div class="todo-app">
+        <div class="row" id="project">
+          
+          <input type="text" id="input-box" placeholder="Add your text">
+          <button id="add-btn">Add</button>
+        </div>
+        <ul id="list-container">
+        </ul>
     </div>
   </div>
 </body>
