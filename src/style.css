@@ -14,7 +14,8 @@
 * {
   margin: 0;
   padding: 0;
-  font-family: "poppins", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   box-sizing: border-box;
   color: var(--black-clr);
 }
@@ -22,7 +23,7 @@
 .container {
   display: grid;
   gap: 1em;
-  grid-template-columns: minmax(100px, 300px) 3fr;
+  grid-template-columns: minmax(150px, 300px) 3fr;
   grid-template-rows: 100px repeat(3, 1fr);
   grid-template-areas:
     "side-bar heading"
@@ -117,7 +118,7 @@
 
 .go-premium {
   position: relative;
-  padding: .6em;
+  padding: 0.6em;
   padding-left: 2em;
 }
 
@@ -139,23 +140,70 @@
   padding: 0.6em;
 }
 
+.task-type ul li,
+.list-container .list-item {
+  list-style: none;
+  font-size: 17px;
+  cursor: pointer;
+  user-select: none;
+}
+
 .go-premium:hover,
 .task-type ul li:hover {
   background: var(--transparent-reddish-orange-clr);
 }
 
 .todo-app {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   grid-area: todo-app;
   background: var(--white-clr);
+  
+}
+
+.todo-app .create-project {
+  flex: 0 0 auto;
+  align-self: end;
+}
+
+.todo-app .create-project h3 {
+  color: var(--reddish-orange-clr);
+}
+
+.todo-app .create-project h3 button {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.todo-app .create-project h3 button:hover {
+  background: rgba(185, 181, 181, 0.2);
+}
+
+.todo-app .create-project h3 button img {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.todo-app .project-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2em;
 }
 
 .row {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 5px;
   background: var(--off-white-clr);
-  border-radius: 30px;
-  padding-left: 20px;
+  border-radius: 20px;
+  padding: 0 5px 0 10px;
   margin-bottom: 25px;
 }
 
@@ -170,25 +218,17 @@ input {
   font-size: inherit;
   font-family: inherit;
   background: transparent;
-  padding: 10px;
+  padding: 15px 0;
+  min-width: 150px;
 }
 
-button {
-  padding: 16px 50px;
+.row button {
+  padding: 8px 16px;
   outline: none;
-  padding: 16px 50px;
   background: var(--reddish-orange-clr);
   color: var(--white-clr);
   cursor: pointer;
   border-radius: 40px;
-}
-
-.task-type ul li,
-.list-container .list-item {
-  list-style: none;
-  font-size: 17px;
-  cursor: pointer;
-  user-select: none;
 }
 
 .list-container .list-item {
@@ -243,4 +283,30 @@ button {
 
 .list-item .delete-list-item:hover {
   background-color: var(--off-white-clr);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+}
+
+.hidden {
+  display: none;
 }
