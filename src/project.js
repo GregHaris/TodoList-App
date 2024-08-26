@@ -1,10 +1,10 @@
 // Get project title.
 export default function createProject() {
-  const createTodo = document.querySelector("#createTodo");
+  const projectCreationSection = document.querySelector("#projectCreationSection");
   const titleInputContainer = createTitleInputContainer();
-  createTodo.appendChild(titleInputContainer);
+  projectCreationSection.appendChild(titleInputContainer);
 
-  addTitleBtnEventListener(titleInputContainer, createTodo);
+  addTitleBtnEventListener(titleInputContainer, projectCreationSection);
   addTitleInputEventListener(titleInputContainer);
 }
 
@@ -24,7 +24,7 @@ function createTitleInputContainer() {
   return titleInputContainer;
 }
 
-function addTitleBtnEventListener(titleInputContainer, createTodo) {
+function addTitleBtnEventListener(titleInputContainer, projectCreationSection) {
   const addTitleBtn = titleInputContainer.querySelector("button");
   addTitleBtn.addEventListener("click", () => {
     const titleInput = titleInputContainer.querySelector("input");
@@ -32,10 +32,10 @@ function addTitleBtnEventListener(titleInputContainer, createTodo) {
 
     if (titleInputValue) {
       const projectTitleContainer = createProjectTitleContainer(titleInputValue);
-      createTodo.removeChild(titleInputContainer);
-      createTodo.appendChild(projectTitleContainer);
+      projectCreationSection.removeChild(titleInputContainer);
+      projectCreationSection.appendChild(projectTitleContainer);
 
-      addProjectTitleEventListeners(projectTitleContainer, createTodo);
+      addProjectTitleEventListeners(projectTitleContainer, projectCreationSection);
     }
   });
 }
@@ -74,7 +74,7 @@ function createProjectTitleContainer(titleInputValue) {
   return projectTitleContainer;
 }
 
-function addProjectTitleEventListeners(projectTitleContainer, createTodo) {
+function addProjectTitleEventListeners(projectTitleContainer, projectCreationSection) {
   const projectTitle = projectTitleContainer.querySelector(".project-title");
   const editBtn = projectTitleContainer.querySelector(".edit-btn");
   const deleteBtn = projectTitleContainer.querySelector(".delete-btn");
@@ -85,7 +85,7 @@ function addProjectTitleEventListeners(projectTitleContainer, createTodo) {
   });
 
   deleteBtn.addEventListener("click", () => {
-    createTodo.removeChild(projectTitleContainer);
+    projectCreationSection.removeChild(projectTitleContainer);
   });
 
   projectTitle.addEventListener("click", () => {
@@ -96,4 +96,30 @@ function addProjectTitleEventListeners(projectTitleContainer, createTodo) {
 
     projectContainer.insertBefore(projectHeading, projectContainer.firstChild);
   });
+}
+
+function createProjectDetails () {
+  const descriptionInput = document.createElement("input");
+  descriptionInput.type = "text";
+  descriptionInput.id = "descriptionInput";
+  descriptionInput.placeholder = "Description";
+
+  const dueDateInput = document.createElement("input");
+  dueDateInput.type = "date";
+  dueDateInput.id = "dueDateInput";
+
+  const priorityInput = document.createElement("select");
+  priorityInput.id = "priorityInput";
+  const priorityOptions = ["high", "medium", "low"];
+  priorityOptions.forEach(option => {
+    const optionElement = document.createElement("option");
+    optionElement.value = option;
+    optionElement.textContent = option;
+    priorityInput.appendChild(optionElement);
+  });
+
+  const noteInput = document.createElement("textarea");
+  noteInput.id = "noteInput";
+  noteInput.placeholder = "Notes";
+
 }
