@@ -10,7 +10,10 @@ const createProjectSubtasks = () => {
   subtasksCreatorContainer.classList.add("subtasks-creator-container");
 
   const subtasksInput = document.createElement("input");
+  subtasksInput.placeholder = "Add a new substask"
+
   const addsubtasksBtn = document.createElement("button");
+  addsubtasksBtn.textContent = "Add"
   subtasksCreatorContainer.append(subtasksInput, addsubtasksBtn);
 
   const subtasksList = document.createElement("ul");
@@ -38,7 +41,7 @@ const createProjectSubtasks = () => {
     subtask.classList.add("subtask");
     subtask.textContent = subtasksInput.value;
     subtasksList.appendChild(subtask);
-    todoApp.appendChild(subtasksList);
+    // subtasksContainer.appendChild(subtasksList);
 
     const deletesubtaskSpan = document.createElement("span");
     deletesubtaskSpan.classList.add("delete-subtask");
