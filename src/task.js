@@ -1,77 +1,68 @@
+// task.js
+import createTask from "./taskFactory";
+import { createElement, createInput, createButton } from "./domUtils";
+
 const createProjectSubtasks = () => {
-  const subtasksContainer = document.createElement("div");
-  subtasksContainer.classList.add("subtasks-container");
+  const container = createElement("div", "subtasks-container");
+  const heading = createElement("h4", "subtasks-heading", "Subtasks");
+  const creatorContainer = createElement("div", "subtasks-creator-container");
+  const input = createInput("text", "Add a new subtask");
+  const button = createButton("Add", "add-subtask-btn");
+  creatorContainer.append(input, button);
 
-  const substasksHeading = document.createElement("h4");
-  substasksHeading.classList.add("subtasks-heading");
-  substasksHeading.textContent = "Subtasks"
+  const list = document.createElement("ul");
+  list.id = "subtasksList";
+  list.classList.add("subtasks-list");
 
-  const subtasksCreatorContainer = document.createElement("div");
-  subtasksCreatorContainer.classList.add("subtasks-creator-container");
-
-  const subtasksInput = document.createElement("input");
-  subtasksInput.placeholder = "Add a new substask"
-
-  const addsubtasksBtn = document.createElement("button");
-  addsubtasksBtn.textContent = "Add"
-  subtasksCreatorContainer.append(subtasksInput, addsubtasksBtn);
-
-  const subtasksList = document.createElement("ul");
-  subtasksList.id = "subtasksList";
-  subtasksList.classList.add("subtasks-list");
-
-  subtasksInput.addEventListener("keydown", (e) => {
+  input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      addsubtasksBtn.click();
+      button.click();
     }
   });
 
-  addsubtasksBtn.addEventListener("click", () => {
-    addTask();
-    subtasksInput.value = "";
-    // saveData();
+  button.addEventListener("click", () => {
+    addTask(input, list);
+    input.value = "";
   });
 
-  function addTask() {
-    subtasksInput.value === "" ? alert("Add a Subtask") : createSubTask();
-  }
-
-  function createSubTask() {
-    const subtask = document.createElement("li");
-    subtask.classList.add("subtask");
-    subtask.textContent = subtasksInput.value;
-    subtasksList.appendChild(subtask);
-    // subtasksContainer.appendChild(subtasksList);
-
-    const deletesubtaskSpan = document.createElement("span");
-    deletesubtaskSpan.classList.add("delete-subtask");
-    deletesubtaskSpan.textContent = "\u00d7";
-
-    subtask.appendChild(deletesubtaskSpan);
-  }
-
-  subtasksList.addEventListener("click", (e) => {
+  list.addEventListener("click", (e) => {
     if (e.target.classList.contains("subtask")) {
       toggleChecked(e.target);
-      // saveData();
     } else if (e.target.classList.contains("delete-subtask")) {
-      removesubtask(e.target.parentElement);
-      // saveData();
+      removeSubtask(e.target.parentElement);
     }
   });
 
-  function toggleChecked(subtask) {
-    subtask.classList.toggle("checked");
-  }
+  container.append(heading, creatorContainer, list);
+  return container;
+};
 
-  function removesubtask(subtask) {
-    subtask.remove();
+function addTask(input, list) {
+  const value = input.value.trim();
+  if (value === "") {
+    alert("Add a Subtask");
+  } else {
+    createSubTask(value, list);
   }
+}
 
-  function saveData() {
-    const tasks = subtasksList.innerHTML;
-    localStorage.setItem("data", tasks);
-  }
+function createSubTask(value, list) {
+  const task = createTask(value, "");
+  const subtask = createElement("li", "subtask", task.title);
+  const deleteSpan = createElement("span", "delete-subtask", "\u00d7");
+  subtask.appendChild(deleteSpan);
+  list.appendChild(subtask);
+}
+
+function toggleChecked(subtask) {
+  subtask.classList.toggle("checked");
+}
+
+function removeSubtask(subtask) {
+  subtask.remove();
+}
+
+export default createProjectSubtasks;
 
   // function showTask() {
   //   const storedTasks = localStorage.getItem("data");
@@ -80,9 +71,3 @@ const createProjectSubtasks = () => {
   // }
 
   // showTask();
-
-  subtasksContainer.append(substasksHeading, subtasksCreatorContainer, subtasksList);
-  return subtasksContainer;
-};
-
-export default createProjectSubtasks;

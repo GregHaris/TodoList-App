@@ -1,9 +1,10 @@
+// project.js
 import createProjectSubtasks from "./task";
-// Get project title.
+import createTask from "./taskFactory";
+import { createElement, createInput, createButton, createSelect, createLabel } from "./domUtils";
+
 export default function createProject() {
-  const projectCreationSection = document.querySelector(
-    "#projectCreationSection"
-  );
+  const projectCreationSection = document.querySelector("#projectCreationSection");
   const titleInputContainer = createTitleInputContainer();
   projectCreationSection.appendChild(titleInputContainer);
 
@@ -12,242 +13,161 @@ export default function createProject() {
 }
 
 function createTitleInputContainer() {
-  const titleInputContainer = document.createElement("div");
-  titleInputContainer.classList.add("title-input-container");
-
-  const titleInput = document.createElement("input");
-  titleInput.type = "text";
-  titleInput.placeholder = "e.g; Finish Report";
-  titleInput.classList.add("title-input");
-
-  const addTitleBtn = document.createElement("button");
-  addTitleBtn.textContent = "Add";
-
-  titleInputContainer.append(titleInput, addTitleBtn);
-  return titleInputContainer;
+  const container = createElement("div", "title-input-container");
+  const input = createInput("text", "e.g; Finish Report", "title-input");
+  const button = createButton("Add", "add-title-btn");
+  container.append(input, button);
+  return container;
 }
 
-function addTitleBtnEventListener(titleInputContainer, projectCreationSection) {
-  const addTitleBtn = titleInputContainer.querySelector("button");
-  addTitleBtn.addEventListener("click", () => {
-    const titleInput = titleInputContainer.querySelector("input");
-    const titleInputValue = titleInput.value.trim();
+function addTitleBtnEventListener(container, section) {
+  const button = container.querySelector("button");
+  button.addEventListener("click", () => {
+    const input = container.querySelector("input");
+    const value = input.value.trim();
 
-    if (titleInputValue) {
-      const projectTitleContainer =
-        createProjectTitleContainer(titleInputValue);
-      projectCreationSection.removeChild(titleInputContainer);
-      projectCreationSection.appendChild(projectTitleContainer);
+    if (value) {
+      const titleContainer = createProjectTitleContainer(value);
+      section.removeChild(container);
+      section.appendChild(titleContainer);
 
-      addProjectTitleEventListeners(
-        projectTitleContainer,
-        projectCreationSection
-      );
+      addProjectTitleEventListeners(titleContainer, section);
     }
   });
 }
 
-function addTitleInputEventListener(titleInputContainer) {
-  const titleInput = titleInputContainer.querySelector("input");
-  titleInput.addEventListener("keydown", (e) => {
+function addTitleInputEventListener(container) {
+  const input = container.querySelector("input");
+  input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
-      const addTitleBtn = titleInputContainer.querySelector("button");
-      addTitleBtn.click();
+      const button = container.querySelector("button");
+      button.click();
     }
   });
 }
 
-function createProjectTitleContainer(titleInputValue) {
-  const projectTitleContainer = document.createElement("div");
-  projectTitleContainer.classList.add("project-title-container");
-
-  const projectTitle = document.createElement("h4");
-  projectTitle.classList.add("project-title");
-  projectTitle.textContent = titleInputValue;
-
-  const projectTitleBtnsContainer = document.createElement("div");
-  projectTitleBtnsContainer.classList.add("project-title-btns-container");
-
-  const editBtn = document.createElement("button");
-  editBtn.textContent = "✍︎";
-  editBtn.classList.add("edit-btn");
-
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "\u00d7";
-  deleteBtn.classList.add("delete-btn");
-
-  projectTitleBtnsContainer.append(editBtn, deleteBtn);
-  projectTitleContainer.append(projectTitle, projectTitleBtnsContainer);
-  return projectTitleContainer;
+function createProjectTitleContainer(value) {
+  const container = createElement("div", "project-title-container");
+  const title = createElement("h4", "project-title", value);
+  const buttonsContainer = createElement("div", "project-title-btns-container");
+  const editBtn = createButton("✍︎", "edit-btn");
+  const deleteBtn = createButton("\u00d7", "delete-btn");
+  buttonsContainer.append(editBtn, deleteBtn);
+  container.append(title, buttonsContainer);
+  return container;
 }
 
-function addProjectTitleEventListeners(
-  projectTitleContainer,
-  projectCreationSection
-) {
-  const projectTitle = projectTitleContainer.querySelector(".project-title");
-  const editBtn = projectTitleContainer.querySelector(".edit-btn");
-  const deleteBtn = projectTitleContainer.querySelector(".delete-btn");
+function addProjectTitleEventListeners(container, section) {
+  const title = container.querySelector(".project-title");
+  const editBtn = container.querySelector(".edit-btn");
+  const deleteBtn = container.querySelector(".delete-btn");
 
   editBtn.addEventListener("click", () => {
-    projectTitle.setAttribute("contenteditable", true);
-    projectTitle.focus();
+    title.setAttribute("contenteditable", true);
+    title.focus();
   });
 
   deleteBtn.addEventListener("click", () => {
-    projectCreationSection.removeChild(projectTitleContainer);
+    section.removeChild(container);
   });
 
-  projectTitle.addEventListener(
-    "click",
-    () => {
-      const projectContainer = document.querySelector("#projectContainer");
-      const projectHeading = document.createElement("h1");
-      projectHeading.classList.add("project-heading");
-      projectHeading.textContent = projectTitle.textContent;
-
-      projectContainer.insertBefore(
-        projectHeading,
-        projectContainer.firstChild
-      );
-      createProjectDetails(projectContainer);
-    },
-    { once: true }
-  );
+  title.addEventListener("click", () => {
+    const projectContainer = document.querySelector("#projectContainer");
+    const heading = createElement("h1", "project-heading", title.textContent);
+    projectContainer.insertBefore(heading, projectContainer.firstChild);
+    createProjectDetails(projectContainer);
+  }, { once: true });
 }
 
-function createProjectDetails(projectContainer) {
-  const projectDiv = document.createElement("div");
+function createProjectDetails(container) {
+  const projectDiv = createElement("div", "project");
   projectDiv.id = "project";
-  projectDiv.classList.add("project");
 
-  // factory function to create textarea inputs
-  function createTextAreaContainer(id, heading, placeholder) {
-    const textAreaContainer = document.createElement("div");
-    const textAreaHeadingContainer = document.createElement("div");
-    const textAreaHeading = document.createElement("h4");
-    const textArea = document.createElement("textarea");
-
-    textArea.id = id;
-    textArea.placeholder = placeholder;
-
-    textAreaHeading.textContent = heading;
-
-    textAreaHeadingContainer.appendChild(textAreaHeading);
-    textAreaContainer.append(textAreaHeading, textArea);
-
-    return textAreaContainer;
-  }
-
-  //Add project description
-  const descriptionContainer = createTextAreaContainer(
-    "descriptionInput",
-    "DESCRIPTION",
-    "Describe your project here"
-  );
+  const descriptionContainer = createTextAreaContainer("descriptionInput", "DESCRIPTION", "Describe your project here");
   projectDiv.appendChild(descriptionContainer);
 
   descriptionContainer.addEventListener("change", () => {
-    updateProjectDescription();
+    updateProjectDescription(descriptionContainer);
   });
-  function updateProjectDescription() {
-    const projectDescriptionContainer = document.createElement("div");
-    const projectDescription = document.createElement("p");
-    projectDescription.classList.add("project-description");
-    projectDescription.setAttribute("contenteditable", true);
-    projectDescription.textContent = descriptionInput.value;
-    projectDescriptionContainer.appendChild(projectDescription);
 
-    descriptionContainer.removeChild(descriptionInput);
-    descriptionContainer.appendChild(projectDescriptionContainer);
-  }
-
-  // Add project due date
-  const dueDateContainer = document.createElement("div");
-  dueDateContainer.classList.add("due-date-container");
-
-  const dueDateInput = document.createElement("input");
-  dueDateInput.type = "date";
-  dueDateInput.required = true;
-  dueDateInput.id = "dueDateInput";
-
-  const dueDateInputLabel = document.createElement("label");
-  dueDateInputLabel.htmlFor = dueDateInput;
-  dueDateInputLabel.textContent = "Deadline: ";
-
-  dueDateContainer.append(dueDateInputLabel, dueDateInput);
+  const dueDateContainer = createDueDateContainer();
   projectDiv.appendChild(dueDateContainer);
 
-  // Add project priority
-  const priorityContainer = document.createElement("div");
-  priorityContainer.classList.add("priority-container");
-
-  const priorityInput = document.createElement("select");
-  priorityInput.id = "priorityInput";
-
-  const priorityInputLabel = document.createElement("label");
-  priorityInputLabel.htmlFor = priorityInput;
-  priorityInputLabel.textContent = "Project Priority: ";
-
-  const priorityOptions = ["Undecided", "High", "Medium", "Low"];
-  priorityOptions.forEach((option) => {
-    const optionElement = document.createElement("option");
-    optionElement.value = option;
-    optionElement.textContent = option;
-    priorityInput.appendChild(optionElement);
-  });
-
-  // Function to set the background color based on the priority value
-  function setPriorityBackgroundColor() {
-    switch (priorityInput.value) {
-      case "High":
-        priorityInput.style.backgroundColor = "#FF0000";
-        break;
-      case "Medium":
-        priorityInput.style.backgroundColor = "#007FFF";
-        break;
-      case "Low":
-        priorityInput.style.backgroundColor = "#228B22";
-        break;
-      default:
-        priorityInput.style.backgroundColor = "#808080";
-        break;
-    }
-  }
-  // Set initial background color
-  setPriorityBackgroundColor();
-
-  // Add event listener to update the background color when the value changes
-  priorityInput.addEventListener("change", setPriorityBackgroundColor);
-
-  priorityContainer.append(priorityInputLabel, priorityInput);
+  const priorityContainer = createPriorityContainer();
   projectDiv.appendChild(priorityContainer);
 
-  // Add project Note
-  const noteContainer = createTextAreaContainer(
-    "noteInput",
-    "NOTE",
-    "Insert your notes here"
-  );
+  const noteContainer = createTextAreaContainer("noteInput", "NOTE", "Insert your notes here");
   projectDiv.appendChild(noteContainer);
 
   noteContainer.addEventListener("change", () => {
-    updateProjectnote();
+    updateProjectNote(noteContainer);
   });
-  function updateProjectnote() {
-    const projectNoteContainer = document.createElement("div");
-    const projectNote = document.createElement("p");
-    projectNote.classList.add("project-description");
-    projectNote.setAttribute("contenteditable", true);
-    projectNote.textContent = noteInput.value;
-    projectNoteContainer.appendChild(projectNote);
 
-    noteContainer.removeChild(noteInput);
-    noteContainer.appendChild(projectNoteContainer);
-  }
-
-  // add subtasks
   projectDiv.append(createProjectSubtasks());
+  container.appendChild(projectDiv);
+}
 
-  projectContainer.appendChild(projectDiv);
+function createTextAreaContainer(id, heading, placeholder) {
+  const container = createElement("div");
+  const headingContainer = createElement("div");
+  const headingElement = createElement("h4", null, heading);
+  const textArea = document.createElement("textarea");
+  textArea.id = id;
+  textArea.placeholder = placeholder;
+  headingContainer.appendChild(headingElement);
+  container.append(headingContainer, textArea);
+  return container;
+}
+
+function updateProjectDescription(container) {
+  const descriptionContainer = createElement("div");
+  const description = createElement("p", "project-description");
+  description.setAttribute("contenteditable", true);
+  description.textContent = container.querySelector("textarea").value;
+  descriptionContainer.appendChild(description);
+  container.innerHTML = '';
+  container.appendChild(descriptionContainer);
+}
+
+function createDueDateContainer() {
+  const container = createElement("div", "due-date-container");
+  const input = createInput("date", null, "dueDateInput");
+  input.required = true;
+  const label = createLabel(input.id, "Deadline: ");
+  container.append(label, input);
+  return container;
+}
+
+function createPriorityContainer() {
+  const container = createElement("div", "priority-container");
+  const input = createSelect(["Undecided", "High", "Medium", "Low"], "priorityInput");
+  const label = createLabel(input.id, "Project Priority: ");
+  
+  input.addEventListener("change", (e) => {
+    setPriorityBackgroundColor(e.target);
+  });
+  
+  setPriorityBackgroundColor(input);
+  container.append(label, input);
+  return container;
+}
+
+function setPriorityBackgroundColor(input) {
+  const colors = {
+    "Undecided": "#808080",
+    "High": "#FF0000",
+    "Medium": "#007FFF",
+    "Low": "#228B22"
+  };
+  input.style.backgroundColor = colors[input.value] || "#808080";
+}
+
+function updateProjectNote(container) {
+  const noteContainer = createElement("div");
+  const note = createElement("p", "project-description");
+  note.setAttribute("contenteditable", true);
+  note.textContent = container.querySelector("textarea").value;
+  noteContainer.appendChild(note);
+  container.innerHTML = '';
+  container.appendChild(noteContainer);
 }
