@@ -1,64 +1,85 @@
-const inputBox = document.querySelector("#input-box");
-const addItemBtn = document.querySelector("#add-btn");
-const listContainer = document.querySelector("#list-container");
-listContainer.classList.add("list-container");
+const createProjectSubtasks = () => {
+  const subtasksContainer = document.createElement("div");
+  subtasksContainer.classList.add("subtasks-container");
 
-inputBox.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    addItemBtn.click();
+  const substasksHeading = document.createElement("h4");
+  substasksHeading.classList.add("subtasks-heading");
+  substasksHeading.textContent = "Subtasks"
+
+  const subtasksCreatorContainer = document.createElement("div");
+  subtasksCreatorContainer.classList.add("subtasks-creator-container");
+
+  const subtasksInput = document.createElement("input");
+  const addsubtasksBtn = document.createElement("button");
+  subtasksCreatorContainer.append(subtasksInput, addsubtasksBtn);
+
+  const subtasksList = document.createElement("ul");
+  subtasksList.id = "subtasksList";
+  subtasksList.classList.add("subtasks-list");
+
+  subtasksInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      addsubtasksBtn.click();
+    }
+  });
+
+  addsubtasksBtn.addEventListener("click", () => {
+    addTask();
+    subtasksInput.value = "";
+    // saveData();
+  });
+
+  function addTask() {
+    subtasksInput.value === "" ? alert("Add a Subtask") : createSubTask();
   }
-});
 
-addItemBtn.addEventListener("click", () => {
-  addTask();
-  inputBox.value = "";
-  saveData();
-});
+  function createSubTask() {
+    const subtask = document.createElement("li");
+    subtask.classList.add("subtask");
+    subtask.textContent = subtasksInput.value;
+    subtasksList.appendChild(subtask);
+    todoApp.appendChild(subtasksList);
 
-function addTask() {
-  inputBox.value === "" ? alert("Add a TodoList Item") : createTodoListItem();
-}
+    const deletesubtaskSpan = document.createElement("span");
+    deletesubtaskSpan.classList.add("delete-subtask");
+    deletesubtaskSpan.textContent = "\u00d7";
 
-function createTodoListItem() {
-  const listItem = document.createElement("li");
-  listItem.classList.add("list-item");
-  listItem.textContent = inputBox.value;
-  listContainer.appendChild(listItem);
-
-  const deleteListItemSpan = document.createElement("span");
-  deleteListItemSpan.classList.add("delete-list-item");
-  deleteListItemSpan.textContent = "\u00d7";
-
-  listItem.appendChild(deleteListItemSpan);
-}
-
-listContainer.addEventListener("click", (e) => {
-  if (e.target.classList.contains("list-item")) {
-    toggleChecked(e.target);
-    saveData();
-  } else if (e.target.classList.contains("delete-list-item")) {
-    removeListItem(e.target.parentElement);
-    saveData();
+    subtask.appendChild(deletesubtaskSpan);
   }
-});
 
-function toggleChecked(listItem) {
-  listItem.classList.toggle("checked");
-}
+  subtasksList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("subtask")) {
+      toggleChecked(e.target);
+      // saveData();
+    } else if (e.target.classList.contains("delete-subtask")) {
+      removesubtask(e.target.parentElement);
+      // saveData();
+    }
+  });
 
-function removeListItem(ListItem) {
-  ListItem.remove();
-}
+  function toggleChecked(subtask) {
+    subtask.classList.toggle("checked");
+  }
 
-function saveData() {
-  const tasks = listContainer.innerHTML
-  localStorage.setItem("data", tasks);
-}
+  function removesubtask(subtask) {
+    subtask.remove();
+  }
 
-function showTask() {
-  const storedTasks = localStorage.getItem("data");
-  listContainer.innerHTML = "";
-  listContainer.innerHTML = storedTasks
-}
+  function saveData() {
+    const tasks = subtasksList.innerHTML;
+    localStorage.setItem("data", tasks);
+  }
 
-showTask();
+  // function showTask() {
+  //   const storedTasks = localStorage.getItem("data");
+  //   subtasksList.innerHTML = "";
+  //   subtasksList.innerHTML = storedTasks
+  // }
+
+  // showTask();
+
+  subtasksContainer.append(substasksHeading, subtasksCreatorContainer, subtasksList);
+  return subtasksContainer;
+};
+
+export default createProjectSubtasks;
