@@ -1,3 +1,4 @@
+import createProjectSubtasks from "./task";
 // Get project title.
 export default function createProject() {
   const projectCreationSection = document.querySelector(
@@ -186,7 +187,7 @@ function createProjectDetails(projectContainer) {
 
   const priorityInputLabel = document.createElement("label");
   priorityInputLabel.htmlFor = priorityInput;
-  priorityInputLabel.textContent = "Project Priority: "
+  priorityInputLabel.textContent = "Project Priority: ";
 
   const priorityOptions = ["Undecided", "High", "Medium", "Low"];
   priorityOptions.forEach((option) => {
@@ -245,93 +246,8 @@ function createProjectDetails(projectContainer) {
     noteContainer.appendChild(projectNoteContainer);
   }
 
+  // add subtasks
+  projectDiv.append(createProjectSubtasks());
+
   projectContainer.appendChild(projectDiv);
 }
-
-// const noteInput = document.createElement("textarea");
-// noteInput.id = "noteInput";
-// noteInput.placeholder = "Notes";
-
-// projectContainer.appendChild(descriptionInput);
-// projectContainer.appendChild(dueDateInput);
-// projectContainer.appendChild(priorityInput);
-// projectContainer.appendChild(noteInput);
-
-// // Add event listeners to each input field
-// descriptionInput.addEventListener("input", () => {
-//   displayProject(
-//     descriptionInput.value,
-//     dueDateInput.value,
-//     priorityInput.value,
-//     noteInput.value,
-//     projectContainer
-//   );
-// });
-
-// dueDateInput.addEventListener("input", () => {
-//   displayProject(
-//     descriptionInput.value,
-//     dueDateInput.value,
-//     priorityInput.value,
-//     noteInput.value,
-//     projectContainer
-//   );
-// });
-
-// priorityInput.addEventListener("change", () => {
-//   displayProject(
-//     descriptionInput.value,
-//     dueDateInput.value,
-//     priorityInput.value,
-//     noteInput.value,
-//     projectContainer
-//   );
-// });
-
-// noteInput.addEventListener("input", () => {
-//   displayProject(
-//     descriptionInput.value,
-//     dueDateInput.value,
-//     priorityInput.value,
-//     noteInput.value,
-//     projectContainer
-//   );
-// });
-// }
-
-// // Function to display project on the UI
-// function displayProject(description, dueDate, priority, note, projectContainer) {
-//   const projectDiv = document.createElement("div");
-//   projectDiv.id = "project";
-
-//   const projectDescription = document.createElement("p");
-//   projectDescription.classList.add("project-description");
-//   projectDescription.textContent = description;
-
-//   const projectDueDate = document.createElement("p");
-//   projectDueDate.classList.add("project-due-date");
-//   projectDueDate.textContent = dueDate;
-
-//   const projectPriority = document.createElement("span");
-//   projectPriority.classList.add("project-priority");
-//   projectPriority.textContent = priority;
-//   switch (priority) {
-//     case "high":
-//       projectPriority.style.backgroundColor = "red";
-//       break;
-//     case "low":
-//       projectPriority.style.backgroundColor = "green";
-//       break;
-//     default:
-//       projectPriority.style.backgroundColor = "gray";
-//       break;
-//   }
-//   projectPriority.style.color = "white";
-
-//   const projectNote = document.createElement("p");
-//   projectNote.classList.add("project-note");
-//   projectNote.textContent = note;
-
-//   projectDiv.append(projectDescription, projectDueDate, projectPriority, projectNote);
-//   projectContainer.appendChild(projectDiv);
-// }
