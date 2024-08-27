@@ -10,7 +10,7 @@
   --container-border-radius: 10px;
   --black-clr: #251a1a;
   --gap: 1em;
-  --create-todo-width: minmax(150px, 1fr)
+  --create-todo-width: minmax(150px, 1fr);
 }
 
 * {
@@ -145,7 +145,7 @@
 }
 
 .task-type ul li,
-.list-container .list-item {
+.subtasks-list .subtask {
   list-style: none;
   font-size: 17px;
   cursor: pointer;
@@ -170,12 +170,17 @@
   background: var(--white-clr);
 }
 
-.project-creation-section .project-creator-container{
-text-align: center;
+.project-creation-section .project-creator-container {
+  text-align: center;
 }
 
 .project-creation-section .project-creator-container h3 {
-  font-size: clamp(0.7rem, 0.7rem + (1rem - 0.7rem) * ((100vw - var(--create-todo-width)) / (100vw - var(--create-todo-width))), 1rem);
+  font-size: clamp(
+    0.7rem,
+    0.7rem + (1rem - 0.7rem) *
+      ((100vw - var(--create-todo-width)) / (100vw - var(--create-todo-width))),
+    1rem
+  );
   color: var(--reddish-orange-clr);
 }
 
@@ -199,7 +204,7 @@ text-align: center;
   width: 20px;
 }
 
-.row {
+.subtask-creator-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -225,7 +230,7 @@ input {
   min-width: 150px;
 }
 
-.row button {
+.subtask-creator-container button {
   padding: 8px 16px;
   outline: none;
   background: var(--reddish-orange-clr);
@@ -234,12 +239,12 @@ input {
   border-radius: 40px;
 }
 
-.list-container .list-item {
+.subtasks-list .subtask {
   padding: 12px 8px 12px 50px;
   position: relative;
 }
 
-.list-container .list-item::before {
+.subtasks-list .subtask::before {
   content: "";
   position: absolute;
   height: 28px;
@@ -252,11 +257,11 @@ input {
   left: 8px;
 }
 
-.list-container .list-item.checked {
+.subtasks-list .subtask.checked {
   color: var(--transparent-gray-clr);
 }
 
-.list-container .list-item.checked::after {
+.subtasks-list .subtask.checked::after {
   content: "";
   position: absolute;
   left: 3em;
@@ -267,11 +272,11 @@ input {
   transform: translateY(-50%);
 }
 
-.list-container .list-item.checked::before {
+.subtasks-list .subtask.checked::before {
   background-image: url(img/checked.png);
 }
 
-.list-item .delete-list-item {
+.subtask .delete-list-item {
   position: absolute;
   right: 0;
   top: 5px;
@@ -284,10 +289,20 @@ input {
   border-radius: 50%;
 }
 
-.list-item .delete-list-item:hover {
+.subtask .delete-list-item:hover {
   background-color: var(--off-white-clr);
 }
 
 .hidden {
   display: none;
+}
+
+.priority-container select {
+  padding: 0.5em 1em;
+  border: none;
+  color: white;
+  font-size: inherit;
+  font-weight: 700;
+  text-align: center;
+  border-radius: var(--container-border-radius);
 }
