@@ -1,27 +1,27 @@
-// project.js
 import createProjectSubtasks from "./task";
 import createTask from "./taskFactory";
 import {
   createElement,
   createInput,
+  createEditablePInput,
   createButton,
   createSelect,
   createLabel,
 } from "./domUtils";
-import { saveData, loadData } from "./dataStorage";
+// import { setUpClearLocalStorageBtn, saveData, loadData } from "./dataStorage"; // Import saveData and loadData
 
 let projectContainer, projectCreationSection;
 
 document.addEventListener("DOMContentLoaded", () => {
-  projectContainer = document.getElementById("projectContainer");
-  projectCreationSection = document.getElementById("projectCreationSection");
+  projectContainer = document.querySelector("#projectContainer");
+  projectCreationSection = document.querySelector("#projectCreationSection");
 
   if (!projectContainer || !projectCreationSection) {
     console.error("Required DOM elements not found");
     return;
   }
 
-  loadData();
+  // loadData(); // Call loadData to restore the application state
   createProject();
 });
 
@@ -31,12 +31,12 @@ export default function createProject() {
 
   createButtonEventListener(titleInputContainer, projectCreationSection);
   addTitleInputEventListener(titleInputContainer);
-  saveData();
+  // saveData(); // Call saveData to persist the initial state
 }
 
 function createTitleInputContainer() {
   const container = createElement("div", "title-input-container");
-  const input = createInput("text", "e.g; Finish Report", "title-input");
+  const input = createInput("e.g; Finish Report", "title-input");
   const button = createButton("Add", "add-title-btn");
   container.append(input, button);
   return container;
@@ -58,7 +58,7 @@ function createButtonEventListener(container, section) {
       titleContainer.projectDetails = projectDetails; // Store project details in the title container
       addProjectTitleEventListeners(titleContainer, projectContainer);
     }
-    saveData();
+    // saveData(); // Call saveData after adding a new project
   });
 }
 
@@ -68,7 +68,7 @@ function addTitleInputEventListener(container) {
     if (e.key === "Enter") {
       const button = container.querySelector("button");
       button.click();
-      saveData();
+      // saveData(); // Call saveData after pressing Enter
     }
   });
 }
@@ -92,18 +92,18 @@ function addProjectTitleEventListeners(container, projectContainer) {
   const editHandler = () => {
     title.setAttribute("contenteditable", true);
     title.focus();
-    saveData();
+    // saveData(); // Call saveData after editing the title
   };
 
   const deleteHandler = () => {
     projectContainer.removeChild(container);
-    saveData();
+    // saveData(); // Call saveData after deleting a project
   };
 
   const titleClickHandler = () => {
     hideAllProjectDetails(projectContainer);
     showProjectDetails(container);
-    saveData();
+    // saveData(); // Call saveData after clicking on a project title
   };
 
   editBtn.addEventListener("click", editHandler);
@@ -151,67 +151,50 @@ function createProjectHeading(value) {
 }
 
 function createDescriptionContainer() {
-  const container = createTextAreaContainer(
-    "descriptionInput",
-    "DESCRIPTION",
-    "Describe your project here"
+  const container = createElement("div", "description-container");
+  const descriptionHeadingContainer = createElement(
+    "div",
+    "description-heading-container"
   );
-  container.addEventListener("change", () => {
-    updateProjectDescription(container);
-    saveData();
-  });
+  const descriptionHeading = createElement(
+    "h4",
+    "description-heading",
+    "DESCRIPTION"
+  );
+  const description = createEditablePInput(
+    "Describe your project here",
+    "project-description"
+  );
+
+  descriptionHeadingContainer.appendChild(descriptionHeading);
+  container.append(descriptionHeadingContainer, description);
+
   return container;
 }
 
 function createNoteContainer() {
-  const container = createTextAreaContainer(
-    "noteInput",
-    "NOTE",
-    "Insert your notes here"
-  );
-  container.addEventListener("change", () => {
-    updateProjectNote(container);
-    saveData();
-  });
-  return container;
-}
+  const container = createElement("div", "note-container");
+  const noteHeadingContainer = createElement("div", "note-heading-container");
+  const noteHeading = createElement("h4", "note-heading", "NOTE");
+  const note = createEditablePInput("Insert your notes here", "project-note");
 
-function createTextAreaContainer(id, heading, placeholder) {
-  const container = createElement("div");
-  const headingContainer = createElement("div");
-  const headingElement = createElement("h4", null, heading);
-  const textArea = document.createElement("textarea");
-  textArea.id = id;
-  textArea.placeholder = placeholder;
-  headingContainer.appendChild(headingElement);
-  container.append(headingContainer, textArea);
-  return container;
-}
+  noteHeadingContainer.appendChild(noteHeading);
+  container.append(noteHeadingContainer, note);
 
-function updateProjectDescription(container) {
-  const descriptionContainer = createElement("div");
-  const descriptionHeadingContainer = createElement("div");
-  const descriptionHeading = createElement("h4", null, "DESCRIPTION");
-  const description = createElement("p", "project-description");
-  description.setAttribute("contenteditable", true);
-  description.textContent = container.querySelector("textarea").value;
-  descriptionHeadingContainer.appendChild(descriptionHeading);
-  descriptionContainer.append(descriptionHeadingContainer, description);
-  container.innerHTML = "";
-  container.appendChild(descriptionContainer);
-  saveData();
+  return container;
 }
 
 function createDueDateContainer() {
   const container = createElement("div", "due-date-container");
-  const input = createInput("date", null, "dueDateInput");
+  const input = createInput("Deadline", "dueDateInput");
+  input.setAttribute("type", "date");
   input.required = true;
-  const label = createLabel(input.id, "Deadline: ");
+  const label = createLabel(input.id, "DEADLINE: ");
   container.append(label, input);
 
   // Save data when the due date is set
   input.addEventListener("change", () => {
-    saveData();
+    // saveData(); // Call saveData after changing the due date
   });
 
   return container;
@@ -223,11 +206,11 @@ function createPriorityContainer() {
     ["Undecided", "High", "Medium", "Low"],
     "priorityInput"
   );
-  const label = createLabel(input.id, "Project Priority: ");
+  const label = createLabel(input.id, "PROJECT PRIORITY: ");
 
   input.addEventListener("change", (e) => {
     setPriorityBackgroundColor(e.target);
-    saveData();
+    // saveData(); // Call saveData after changing the priority
   });
 
   setPriorityBackgroundColor(input);
@@ -245,29 +228,15 @@ function setPriorityBackgroundColor(input) {
   input.style.backgroundColor = colors[input.value] || "#808080";
 }
 
-function updateProjectNote(container) {
-  const noteContainer = createElement("div");
-  const noteHeadingContainer = createElement("div");
-  const noteHeading = createElement("h4", null, "NOTE");
-  const note = createElement("p", "project-description");
-  note.setAttribute("contenteditable", true);
-  note.textContent = container.querySelector("textarea").value;
-  noteHeadingContainer.appendChild(noteHeading);
-  noteContainer.append(noteHeadingContainer, note);
-  container.innerHTML = "";
-  container.appendChild(noteContainer);
-  saveData();
-}
-
 function hideAllProjectDetails(projectContainer) {
   const projectDetails = projectContainer.querySelectorAll(".project");
   projectDetails.forEach((detail) => (detail.style.display = "none"));
-  saveData();
+  // saveData(); // Call saveData after hiding project details
 }
 
 function showProjectDetails(container) {
   if (container.projectDetails) {
     container.projectDetails.style.display = "block";
   }
-  saveData();
+  // saveData(); // Call saveData after showing project details
 }

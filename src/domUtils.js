@@ -14,6 +14,36 @@ export function createInput(type, placeholder, className) {
   return input;
 }
 
+export function createEditablePInput(placeholder, className) {
+  const input = document.createElement("p");
+  input.setAttribute("contenteditable", "true");
+  input.placeholder = placeholder || "";
+  if (className) input.classList.add(className);
+
+  // Add placeholder logic
+  input.addEventListener("focus", () => {
+    if (input.textContent === placeholder) {
+      input.textContent = "";
+      input.classList.remove("placeholder");
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    if (!input.textContent.trim()) {
+      input.textContent = placeholder;
+      input.classList.add("placeholder");
+    }
+  });
+
+  // Initialize placeholder
+  if (!input.textContent.trim()) {
+    input.textContent = placeholder;
+    input.classList.add("placeholder");
+  }
+
+  return input;
+}
+
 export function createButton(text, className) {
   const button = document.createElement("button");
   button.textContent = text;

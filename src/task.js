@@ -1,7 +1,6 @@
-// task.js
 import createTask from "./taskFactory";
 import { createElement, createInput, createButton } from "./domUtils";
-import { saveData } from "./dataStorage";
+// import { saveData } from "./dataStorage"; // Import saveData
 
 const createProjectSubtasks = () => {
   const container = createElement("div", "subtasks-container");
@@ -24,16 +23,16 @@ const createProjectSubtasks = () => {
   button.addEventListener("click", () => {
     addTask(input, list);
     input.value = "";
-    saveData()
+    // saveData(); // Call saveData after adding a subtask
   });
 
   list.addEventListener("click", (e) => {
     if (e.target.classList.contains("subtask")) {
       toggleChecked(e.target);
-      saveData()
+      // saveData(); // Call saveData after toggling a subtask
     } else if (e.target.classList.contains("delete-subtask")) {
       removeSubtask(e.target.parentElement);
-      saveData()
+      // saveData(); // Call saveData after deleting a subtask
     }
   });
 
@@ -47,7 +46,7 @@ function addTask(input, list) {
     alert("Add a Subtask");
   } else {
     createSubTask(value, list);
-    saveData()
+    // saveData(); // Call saveData after adding a subtask
   }
 }
 
