@@ -36,7 +36,7 @@ export default function createProject() {
 
 function createTitleInputContainer() {
   const container = createElement("div", "title-input-container");
-  const input = createInput("e.g; Finish Report", "title-input");
+  const input = createInput("text", "e.g; Finish Report", "title-input");
   const button = createButton("Add", "add-title-btn");
   container.append(input, button);
   return container;
