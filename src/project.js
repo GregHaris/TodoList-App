@@ -1,15 +1,37 @@
 // project.js
 import createProjectSubtasks from "./task";
 import createTask from "./taskFactory";
-import { createElement, createInput, createButton, createSelect, createLabel } from "./domUtils";
+import {
+  createElement,
+  createInput,
+  createButton,
+  createSelect,
+  createLabel,
+} from "./domUtils";
+import { saveData, loadData } from "./dataStorage";
+
+let projectContainer, projectCreationSection;
+
+document.addEventListener("DOMContentLoaded", () => {
+  projectContainer = document.getElementById("projectContainer");
+  projectCreationSection = document.getElementById("projectCreationSection");
+
+  if (!projectContainer || !projectCreationSection) {
+    console.error("Required DOM elements not found");
+    return;
+  }
+
+  loadData();
+  createProject();
+});
 
 export default function createProject() {
-  const projectCreationSection = document.querySelector("#projectCreationSection");
   const titleInputContainer = createTitleInputContainer();
   projectCreationSection.appendChild(titleInputContainer);
 
-  addTitleBtnEventListener(titleInputContainer, projectCreationSection);
+  createButtonEventListener(titleInputContainer, projectCreationSection);
   addTitleInputEventListener(titleInputContainer);
+  saveData();
 }
 
 function createTitleInputContainer() {
@@ -20,7 +42,7 @@ function createTitleInputContainer() {
   return container;
 }
 
-function addTitleBtnEventListener(container, section) {
+function createButtonEventListener(container, section) {
   const button = container.querySelector("button");
   button.addEventListener("click", () => {
     const input = container.querySelector("input");
@@ -31,8 +53,12 @@ function addTitleBtnEventListener(container, section) {
       section.removeChild(container);
       section.appendChild(titleContainer);
 
-      addProjectTitleEventListeners(titleContainer, section);
+      hideAllProjectDetails(projectContainer);
+      const projectDetails = createProjectDetails(projectContainer, value);
+      titleContainer.projectDetails = projectDetails; // Store project details in the title container
+      addProjectTitleEventListeners(titleContainer, projectContainer);
     }
+    saveData();
   });
 }
 
@@ -42,6 +68,7 @@ function addTitleInputEventListener(container) {
     if (e.key === "Enter") {
       const button = container.querySelector("button");
       button.click();
+      saveData();
     }
   });
 }
@@ -57,54 +84,96 @@ function createProjectTitleContainer(value) {
   return container;
 }
 
-function addProjectTitleEventListeners(container, section) {
+function addProjectTitleEventListeners(container, projectContainer) {
   const title = container.querySelector(".project-title");
   const editBtn = container.querySelector(".edit-btn");
   const deleteBtn = container.querySelector(".delete-btn");
 
-  editBtn.addEventListener("click", () => {
+  const editHandler = () => {
     title.setAttribute("contenteditable", true);
     title.focus();
-  });
+    saveData();
+  };
 
-  deleteBtn.addEventListener("click", () => {
-    section.removeChild(container);
-  });
+  const deleteHandler = () => {
+    projectContainer.removeChild(container);
+    saveData();
+  };
 
-  title.addEventListener("click", () => {
-    const projectContainer = document.querySelector("#projectContainer");
-    const heading = createElement("h1", "project-heading", title.textContent);
-    projectContainer.insertBefore(heading, projectContainer.firstChild);
-    createProjectDetails(projectContainer);
-  }, { once: true });
+  const titleClickHandler = () => {
+    hideAllProjectDetails(projectContainer);
+    showProjectDetails(container);
+    saveData();
+  };
+
+  editBtn.addEventListener("click", editHandler);
+  deleteBtn.addEventListener("click", deleteHandler);
+  title.addEventListener("click", titleClickHandler);
+
+  // Store event listeners for later removal if needed
+  container.eventListeners = {
+    edit: editHandler,
+    delete: deleteHandler,
+    titleClick: titleClickHandler,
+  };
 }
 
-function createProjectDetails(container) {
+function removeProjectTitleEventListeners(container) {
+  const title = container.querySelector(".project-title");
+  const editBtn = container.querySelector(".edit-btn");
+  const deleteBtn = container.querySelector(".delete-btn");
+
+  if (container.eventListeners) {
+    editBtn.removeEventListener("click", container.eventListeners.edit);
+    deleteBtn.removeEventListener("click", container.eventListeners.delete);
+    title.removeEventListener("click", container.eventListeners.titleClick);
+    delete container.eventListeners;
+  }
+}
+
+function createProjectDetails(container, value) {
   const projectDiv = createElement("div", "project");
   projectDiv.id = "project";
 
-  const descriptionContainer = createTextAreaContainer("descriptionInput", "DESCRIPTION", "Describe your project here");
-  projectDiv.appendChild(descriptionContainer);
-
-  descriptionContainer.addEventListener("change", () => {
-    updateProjectDescription(descriptionContainer);
-  });
-
-  const dueDateContainer = createDueDateContainer();
-  projectDiv.appendChild(dueDateContainer);
-
-  const priorityContainer = createPriorityContainer();
-  projectDiv.appendChild(priorityContainer);
-
-  const noteContainer = createTextAreaContainer("noteInput", "NOTE", "Insert your notes here");
-  projectDiv.appendChild(noteContainer);
-
-  noteContainer.addEventListener("change", () => {
-    updateProjectNote(noteContainer);
-  });
-
+  projectDiv.appendChild(createProjectHeading(value));
+  projectDiv.appendChild(createDescriptionContainer());
+  projectDiv.appendChild(createDueDateContainer());
+  projectDiv.appendChild(createPriorityContainer());
+  projectDiv.appendChild(createNoteContainer());
   projectDiv.append(createProjectSubtasks());
+
   container.appendChild(projectDiv);
+  return projectDiv;
+}
+
+function createProjectHeading(value) {
+  return createElement("h1", "project-heading", value);
+}
+
+function createDescriptionContainer() {
+  const container = createTextAreaContainer(
+    "descriptionInput",
+    "DESCRIPTION",
+    "Describe your project here"
+  );
+  container.addEventListener("change", () => {
+    updateProjectDescription(container);
+    saveData();
+  });
+  return container;
+}
+
+function createNoteContainer() {
+  const container = createTextAreaContainer(
+    "noteInput",
+    "NOTE",
+    "Insert your notes here"
+  );
+  container.addEventListener("change", () => {
+    updateProjectNote(container);
+    saveData();
+  });
+  return container;
 }
 
 function createTextAreaContainer(id, heading, placeholder) {
@@ -121,12 +190,16 @@ function createTextAreaContainer(id, heading, placeholder) {
 
 function updateProjectDescription(container) {
   const descriptionContainer = createElement("div");
+  const descriptionHeadingContainer = createElement("div");
+  const descriptionHeading = createElement("h4", null, "DESCRIPTION");
   const description = createElement("p", "project-description");
   description.setAttribute("contenteditable", true);
   description.textContent = container.querySelector("textarea").value;
-  descriptionContainer.appendChild(description);
-  container.innerHTML = '';
+  descriptionHeadingContainer.appendChild(descriptionHeading);
+  descriptionContainer.append(descriptionHeadingContainer, description);
+  container.innerHTML = "";
   container.appendChild(descriptionContainer);
+  saveData();
 }
 
 function createDueDateContainer() {
@@ -135,18 +208,28 @@ function createDueDateContainer() {
   input.required = true;
   const label = createLabel(input.id, "Deadline: ");
   container.append(label, input);
+
+  // Save data when the due date is set
+  input.addEventListener("change", () => {
+    saveData();
+  });
+
   return container;
 }
 
 function createPriorityContainer() {
   const container = createElement("div", "priority-container");
-  const input = createSelect(["Undecided", "High", "Medium", "Low"], "priorityInput");
+  const input = createSelect(
+    ["Undecided", "High", "Medium", "Low"],
+    "priorityInput"
+  );
   const label = createLabel(input.id, "Project Priority: ");
-  
+
   input.addEventListener("change", (e) => {
     setPriorityBackgroundColor(e.target);
+    saveData();
   });
-  
+
   setPriorityBackgroundColor(input);
   container.append(label, input);
   return container;
@@ -154,20 +237,37 @@ function createPriorityContainer() {
 
 function setPriorityBackgroundColor(input) {
   const colors = {
-    "Undecided": "#808080",
-    "High": "#FF0000",
-    "Medium": "#007FFF",
-    "Low": "#228B22"
+    Undecided: "#808080",
+    High: "#FF0000",
+    Medium: "#007FFF",
+    Low: "#228B22",
   };
   input.style.backgroundColor = colors[input.value] || "#808080";
 }
 
 function updateProjectNote(container) {
   const noteContainer = createElement("div");
+  const noteHeadingContainer = createElement("div");
+  const noteHeading = createElement("h4", null, "NOTE");
   const note = createElement("p", "project-description");
   note.setAttribute("contenteditable", true);
   note.textContent = container.querySelector("textarea").value;
-  noteContainer.appendChild(note);
-  container.innerHTML = '';
+  noteHeadingContainer.appendChild(noteHeading);
+  noteContainer.append(noteHeadingContainer, note);
+  container.innerHTML = "";
   container.appendChild(noteContainer);
+  saveData();
+}
+
+function hideAllProjectDetails(projectContainer) {
+  const projectDetails = projectContainer.querySelectorAll(".project");
+  projectDetails.forEach((detail) => (detail.style.display = "none"));
+  saveData();
+}
+
+function showProjectDetails(container) {
+  if (container.projectDetails) {
+    container.projectDetails.style.display = "block";
+  }
+  saveData();
 }
