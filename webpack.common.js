@@ -34,7 +34,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '@fullcalendar': path.resolve(__dirname, 'node_modules/@fullcalendar'),
+      "@fullcalendar": path.resolve(__dirname, "node_modules/@fullcalendar"),
     },
   },
 };
