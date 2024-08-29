@@ -103,6 +103,11 @@
   color: var(--off-white-clr);
 }
 
+.login-details .user-name:not(span):hover,
+.clear-localStorage-btn:hover {
+  opacity: .9;
+}
+
 .login-details .user-name span {
   display: block;
   font-size: 16px;
@@ -155,6 +160,15 @@
 .go-premium:hover,
 .task-type ul li:hover {
   background: var(--transparent-reddish-orange-clr);
+}
+
+.clear-localStorage-btn {
+  padding: .5em;
+  border-radius: var(--container-border-radius);
+  font-weight: 500;
+  color: var(--reddish-orange-clr);
+  background-color: var(--off-white-clr);
+  cursor: pointer;
 }
 
 .todo-app {
@@ -229,6 +243,7 @@ input {
   padding: 15px 0;
   min-width: 150px;
 }
+
 
 .subtasks-creator-container button {
   padding: 8px 16px;
