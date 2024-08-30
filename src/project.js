@@ -74,14 +74,14 @@ function addTitleInputEventListener(container) {
 }
 
 function createProjectTitleContainer(value) {
-  const container = createElement("div", "project-title-container");
+  const projectTitleContainer = createElement("div", "project-title-container");
   const title = createElement("h4", "project-title", value);
   const buttonsContainer = createElement("div", "project-title-btns-container");
   const editBtn = createButton("✍︎", "edit-btn");
   const deleteBtn = createButton("\u00d7", "delete-btn");
   buttonsContainer.append(editBtn, deleteBtn);
-  container.append(title, buttonsContainer);
-  return container;
+  projectTitleContainer.append(title, buttonsContainer);
+  return projectTitleContainer;
 }
 
 function addProjectTitleEventListeners(container, projectContainer) {

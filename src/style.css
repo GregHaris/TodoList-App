@@ -69,14 +69,19 @@
   grid-area: side-bar;
   gap: var(--gap);
   background: var(--reddish-orange-clr);
+  position: relative;
 }
 
 .side-bar,
 .todo-app .project-creation-section,
 .todo-app .project-container {
   height: 100%;
-  padding: 40px 30px 70px;
   border-radius: var(--container-border-radius);
+}
+
+.side-bar,
+.todo-app .project-container {
+  padding: 40px 30px 70px;
 }
 
 .user-details {
@@ -104,8 +109,9 @@
 }
 
 .login-details .user-name:not(span):hover,
-.clear-localStorage-btn:hover {
-  opacity: .9;
+.clear-localStorage-btn:hover,
+.project-creation-section .title-input-container button:hover {
+  opacity: 0.9;
 }
 
 .login-details .user-name span {
@@ -162,8 +168,15 @@
   background: var(--transparent-reddish-orange-clr);
 }
 
+.clear-localStorage-btn-container {
+  position: fixed;
+  bottom: 2em;
+  display: flex;
+  justify-content: center;
+}
+
 .clear-localStorage-btn {
-  padding: .5em;
+  padding: 0.5em;
   border-radius: var(--container-border-radius);
   font-weight: 500;
   color: var(--reddish-orange-clr);
@@ -182,6 +195,13 @@
 .project-creation-section,
 .project-container {
   background: var(--white-clr);
+}
+
+.project-creation-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: 40px 10px 70px;
 }
 
 .project-creation-section .project-creator-container {
@@ -218,6 +238,98 @@
   width: 20px;
 }
 
+.project-creation-section .title-input-container {
+  margin: 0 auto;
+}
+
+.project-creation-section .title-input-container input {
+  width: 150px;
+}
+
+.project-creation-section .title-input-container button {
+  border-radius: var(--container-border-radius);
+  background: var(--reddish-orange-clr);
+  color: var(--off-white-clr);
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+.project-creation-section .project-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.3em;
+  padding: 1em 0;
+}
+
+.project-creation-section
+  .project-title-container
+  .project-title-btns-container {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
+
+.project-creation-section
+  .project-title-container
+  .project-title-btns-container button {
+    flex: 1;
+  }
+
+.project {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--gap) * 2);
+}
+
+.project > div:not(.subtasks-container) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.project-creation-section
+  .project-title-container h4,
+.project p {
+  outline: none;
+  text-overflow: clip;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.project p {
+  font-size: 0.9em;
+  outline: none;
+  text-overflow: clip;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 500px;
+}
+
+.project h4 {
+  font-size: larger;
+}
+
+.project label {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.project-heading {
+  text-align: center;
+}
+
+.placeholder {
+  color: var(--transparent-gray-clr);
+}
+
+.subtasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
 .subtasks-creator-container {
   display: flex;
   align-items: center;
@@ -235,15 +347,17 @@ button {
   outline: none;
 }
 
-input {
+.subtasks-creator-container input {
   flex: 1;
-  font-size: inherit;
-  font-family: inherit;
-  background: transparent;
   padding: 15px 0;
   min-width: 150px;
 }
 
+input {
+  font-size: inherit;
+  font-family: inherit;
+  background: transparent;
+}
 
 .subtasks-creator-container button {
   padding: 8px 16px;
@@ -281,7 +395,7 @@ input {
   position: absolute;
   left: 3em;
   top: 50%;
-  width: 90%;
+  width: 70%;
   height: 1px;
   background-color: #ff5945;
   transform: translateY(-50%);
